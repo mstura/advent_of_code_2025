@@ -2,4 +2,5 @@
 test/
 *.exe
 *.pdb
+*.rdi
 input.txt
