@@ -41,11 +41,11 @@ parse :: proc(data: ^[]byte) -> []i16 {
 	return sa.slice(&_actions)
 }
 
-rotate_dial :: proc(dial: ^Dial, action: i16) {
+rotate_dial :: #force_inline proc "contextless" (dial: ^Dial, action: i16) {
 	dial.value = math.floor_mod(dial.value + action, 100)
 }
 
-rotate_dial2 :: proc(dial: ^Dial, action: i16) {
+rotate_dial2 :: #force_inline proc "contextless" (dial: ^Dial, action: i16) {
 	awt := dial.value + action
 	rev := math.abs(awt / 100)
 	mod := math.floor_mod(awt, 100)
