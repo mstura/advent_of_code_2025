@@ -1,12 +1,12 @@
 package main
 
-import "core:math"
-import "core:time"
 import "core:bytes"
 import sa "core:container/small_array"
 import "core:fmt"
+import "core:math"
 import "core:strconv"
 import "core:testing"
+import "core:time"
 
 LB :: []byte{0x0d, 0x0a}
 
@@ -47,7 +47,7 @@ rotate_dial :: proc(dial: ^Dial, action: i16) {
 
 rotate_dial2 :: proc(dial: ^Dial, action: i16) {
 	awt := dial.value + action
-	rev :=  math.abs(awt / 100)
+	rev := math.abs(awt / 100)
 	mod := math.floor_mod(awt, 100)
 
 	if dial.value != 0 && awt <= 0 {
@@ -66,8 +66,8 @@ _test :: proc(t: ^testing.T) {
 
 	testing.expect(t, result == 3, fmt.tprintf("expected result 3, got %d", result))
 
-    result = part2(data)
-    testing.expect(t, result == 6, fmt.tprintf("expected result 6, got %d", result))
+	result = part2(data)
+	testing.expect(t, result == 6, fmt.tprintf("expected result 6, got %d", result))
 }
 
 part1 :: proc(actions: []i16) -> u16 {
