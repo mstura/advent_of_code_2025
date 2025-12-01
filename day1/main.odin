@@ -1,12 +1,11 @@
 package main
 
 import "core:math"
+import "core:time"
 import "core:bytes"
 import sa "core:container/small_array"
 import "core:fmt"
-import "core:sort"
 import "core:strconv"
-import "core:strings"
 import "core:testing"
 
 LB :: []byte{0x0d, 0x0a}
@@ -43,32 +42,20 @@ parse :: proc(data: ^[]byte) -> []i16 {
 }
 
 rotate_dial :: proc(dial: ^Dial, action: i16) {
-	new_value: i16 = (dial.value + action) % 100
-	if new_value < 0 {
-		new_value += 100
-	}
-
-	dial.value = new_value
+	dial.value = math.floor_mod(dial.value + action, 100)
 }
 
-// ugly solution
 rotate_dial2 :: proc(dial: ^Dial, action: i16) {
-	a := action
-	modifier: i16 = a > 0 ? 1 : -1
+	awt := dial.value + action
+	rev :=  math.abs(awt / 100)
+	mod := math.floor_mod(awt, 100)
 
-
-	for a != 0 {
-		dial.value += modifier
-		a -= modifier
-
-		if dial.value == -1 do dial.value = 99
-		else if dial.value == 100 {
-			dial.value = 0
-			dial.pwd += 1
-		} else if dial.value == 0 {
-			dial.pwd += 1
-		}
+	if dial.value != 0 && awt <= 0 {
+		rev += 1
 	}
+
+	dial.pwd += u16(rev)
+	dial.value = mod
 }
 
 @(test)
@@ -111,9 +98,14 @@ part2 :: proc(actions: []i16) -> u16 {
 }
 
 main :: proc() {
+	t := time.Stopwatch{}
+	time.stopwatch_start(&t)
 	input := #load("./data", []byte)
 	data := parse(&input)
 	result := part1(data)
 	result_2 := part2(data)
+	time.stopwatch_stop(&t)
+	d := time.stopwatch_duration(t)
 	fmt.println(result, result_2)
+	fmt.printf("Time taken: %\n", d)
 }
