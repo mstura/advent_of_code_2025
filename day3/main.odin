@@ -53,13 +53,13 @@ part1 :: proc(data: ^[]byte) -> int {
 @(test)
 p2_test :: proc(t: ^testing.T) {
 	data := #load("./example_data", []byte)
-	sum: u128 = part2(&data, 15)
+	sum: u64 = part2(&data, 15)
 
 	testing.expect_value(t, sum, 3121910778619)
 }
 
-part2 :: proc(data: ^[]byte, $width: $N/int) -> u128 {
-	sum: u128
+part2 :: proc(data: ^[]byte, $width: $N/int) -> u64 {
+	sum: u64
 	k :: 12
 	for r in bytes.split_iterator(data, LB) {
 		res: sa.Small_Array(k, int)
@@ -83,12 +83,12 @@ part2 :: proc(data: ^[]byte, $width: $N/int) -> u128 {
 		}
 
 		exp := k - 1
-		value: u128 = 0
+		value: u64 = 0
 
 		for v in sa.slice(&res) {
 			if v != -1 {
 				m := int(math.pow10(f64(exp)))
-				value += u128(v * m)
+				value += u64(v * m)
 				exp -= 1
 			}
 		}
