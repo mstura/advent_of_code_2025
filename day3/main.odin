@@ -58,7 +58,7 @@ p2_test :: proc(t: ^testing.T) {
 	testing.expect_value(t, sum, 3121910778619)
 }
 
-part2 :: proc(data: ^[]byte, $width: $N/int) -> u64 {
+part2 :: proc(data: ^[]byte, $width: $N/uint) -> u64 {
 	sum: u64
 	k :: 12
 	for r in bytes.split_iterator(data, LB) {
