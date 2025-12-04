@@ -70,7 +70,7 @@ grid_inboundp :: #force_inline proc "contextless" (grid: $A/Grid, p: Point) -> b
 	return grid_inbound(grid, p.x, p.y)
 }
 
-grid_neighbours :: proc(grid: $A/Grid($V), x, y: int) -> []V {
+grid_neighbours :: proc "contextless" (grid: $A/Grid($V), x, y: int) -> [8]V {
 	ns := [8]V{}
 	end: int = 0
 
@@ -82,7 +82,7 @@ grid_neighbours :: proc(grid: $A/Grid($V), x, y: int) -> []V {
 		end += 1
 	}
 
-	return slice.clone(ns[:end], context.allocator)
+	return ns
 }
 
 grid_set :: proc "contextless" (grid: ^$A/Grid($V), x, y: int, value: V) {
@@ -130,9 +130,8 @@ part1 :: proc(data: ^[]byte, $H, $W: int) -> int {
 	for v, x, y in grid_loop(&g_iter) {
 		if v == 1 {
 			nhs := grid_neighbours(g, x, y)
-			defer delete(nhs)
 
-			n_nhs := math.sum(nhs)
+			n_nhs := math.sum(nhs[:])
 			if n_nhs < 4 {
 				sum += 1
 			}
@@ -162,9 +161,8 @@ part2 :: proc(data: ^[]byte, $H, $W: int) -> int {
 		for v, x, y in grid_loop(&g_iter) {
 			if v == 1 {
 				nhs := grid_neighbours(g, x, y)
-				defer delete(nhs)
 
-				n_nhs := math.sum(nhs)
+				n_nhs := math.sum(nhs[:])
 				if n_nhs < 4 {
 					l_sum += 1
 					grid_set(&g, x, y, 0)
