@@ -85,6 +85,15 @@ grid_neighbours :: proc "contextless" (grid: $A/Grid($V), x, y: int) -> [8]V {
 	return ns
 }
 
+grid_sum_neighbours :: proc "contextless" (grid: $A/Grid($V), x, y: int, acc: ^int) {
+	for p in POINTS {
+		c := Point{x + p.x, y + p.y}
+
+		if !grid_inboundp(grid, c) do continue
+		acc^ += int(grid_getp(grid, c))
+	}
+}
+
 grid_set :: proc "contextless" (grid: ^$A/Grid($V), x, y: int, value: V) {
 	grid.data[(y * grid.height) + x] = value
 }
@@ -160,9 +169,9 @@ part2 :: proc(data: ^[]byte, $H, $W: int) -> int {
 		g_iter := grid_iter(g)
 		for v, x, y in grid_loop(&g_iter) {
 			if v == 1 {
-				nhs := grid_neighbours(g, x, y)
+				n_nhs : int
+				grid_sum_neighbours(g, x, y, &n_nhs)
 
-				n_nhs := math.sum(nhs[:])
 				if n_nhs < 4 {
 					l_sum += 1
 					grid_set(&g, x, y, 0)
