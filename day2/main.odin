@@ -1,24 +1,21 @@
-package main
+package day2
 
 import "../utils"
+import "../utils/range"
 import "core:bytes"
 import sa "core:container/small_array"
 import "core:fmt"
 import "core:math"
 import "core:slice"
-import "core:strconv"
 import "core:testing"
 import "core:time"
 
 LB :: utils.LB
 
-COMMA :: ','
-DASH :: '-'
+COMMA :: utils.COMMA
+DASH :: utils.DASH
 
-Range :: struct {
-	min: int,
-	max: int,
-}
+Range :: range.Range
 
 digit_count :: proc "contextless" (v: int) -> int {
 	if v < 10 do return 1
@@ -46,22 +43,7 @@ digit_count :: proc "contextless" (v: int) -> int {
 
 parse :: proc(data: ^[]byte, out: ^sa.Small_Array($N, Range)) {
 	for r in bytes.split_iterator(data, []byte{COMMA}) {
-		rng := Range{}
-		start: int = -1
-		ok: bool
-
-		for b, i in r {
-			if start == -1 do start = i
-
-			switch b {
-			case DASH:
-				rng.min, _ = strconv.parse_int(string(r[start:i]))
-				start = -1
-			}
-		}
-
-		rng.max, _ = strconv.parse_int(string(r[start:]))
-
+		rng := range.parse(r)
 		sa.append_elem(out, rng)
 	}
 }
@@ -211,8 +193,8 @@ next_invalid_id_part1 :: proc "contextless" (range: Range, n: int = -1) -> (int,
 }
 
 part2_compute :: proc(range: Range, acc: ^int) {
-	l1:
-	for v in range.min ..= range.max {
+
+	l1: for v in range.min ..= range.max {
 		dc := digit_count(v)
 
 		l2: for chunk_size in 1 ..< dc {
